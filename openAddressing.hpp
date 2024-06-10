@@ -22,19 +22,19 @@ private:
 
 public: 
     // konstruktor, za pomocą niego definiujemy rozmiar tablicy
+    // i inicjalizujemy poczatkowa ilosc elementow
     openAddressing(unsigned int cap): capacity{cap}, size_{0} 
     {
-
         // tworzenie tablicy o zadanym rozmiarze
-        // wraz z wypelnieniem jej kluczami symbolizujacymi wolne miejsca
         table = new std::pair<K, V> [capacity];
+        // wypelnienianie jej kluczami symbolizujacymi wolne miejsca
         for (int i = 0; i < capacity; i++)
         {
             table[i].first = free;
         }
     } 
 
-    
+    // haszowanie klucza, wykorzystujace linear probing
     int hash (K key, int k)
     {
         return ((key % capacity) + k*C ) % capacity;       
@@ -57,8 +57,8 @@ public:
             // do wolnego miejsca w tablicy
             if (table[index].first == free) 
             {
+                // dotaje wtedy zadana pare
                 table[index] = std::make_pair(key, value);
-
                 size_++;
                 return;
             }
@@ -94,9 +94,12 @@ public:
             // jesli obliczony indeks jest indeksem wolnego miejsca, to znaczy, ze podany klucz nie istnieje
             else if (table[index].first == free)
             {
-
                 break;
             }
+
+            // W przeciwnym razie dotarto do zajetego kubelka o kluczu innym niz zadany
+            // Mogl byc on jednak dodany przy ktoryms kolejnym wywolaniu funkcji haszujacej
+            // wiec zwieksza sie k i podejmuje sie kolejna probe
             k++;
         }
         
@@ -125,6 +128,8 @@ public:
             {
                 break;
             }
+
+            // Zwiekszanie licznika sprawdzanych kubelkow, analogicznie do funkcji find()
             k++;
         }
         std::cout << "nie znaleziono klucza\n";
@@ -138,11 +143,16 @@ public:
         while (k < capacity) 
         {
             index = hash(key, k);
+            
+            // zwracanie prawdy przy znalezieniu
             if (table[index].first == key){
                 return true;
             }
+
+            // jesli wynik funkcji haszujacej wzkazuje na wolne miejsce,
+            // to znaczy, ze klucz nie istnieje
             else if (table[index].first == free){
-                break;
+                return false;
             }
             k++;
         }
@@ -177,11 +187,11 @@ public:
         for (int i = 0; i < capacity; i++) 
         {
             if (table[i].first != free) {
+                // wypisuje wartosci, analogicznie do funkcji powyzej
                 std::cout << table[i].second << std::endl;
             }
         }
     }
-
 
     // funkcja pomocnicza sluzaca do wyswietlania par klucz-wartosc
     void display() override
@@ -202,7 +212,6 @@ public:
         }
         std::cout << std::endl;
     }
-
 
     // destruktor 
     ~openAddressing() override 

@@ -5,12 +5,14 @@
 #include <fstream>
 #include <math.h>
 
-// zmienna determinujaca load factor w slownikach
-// obecnie load factor wynosi 50%
+// uzytkownik w funkcjach pomiarowych podaje ilosc elementow struktury
+// ktory przy jej tworzeniu jest mnozony przez ta zmienna
+// - determinuje ona wiec load factor - dla wartosci 2 wynosi on 50%
 int loadFactor = 2;
 
-// ilosc instancji slownikow danej wielkosci
+// ilosc instancji slownikow danej wielkosci 
 int instances = 20;
+
 /*
     funkcje pomiarowe dla tablicy mieszajacej
     z adresowaniem otwartym
@@ -23,20 +25,20 @@ void openAddressMeasureInsert(int numElements)
 	std::ofstream file;
 	int key, value;
 
-    // wektor przechowujacy 10 instancji slownikow o zadanych pojemnosciach
-	// load factor wynosi 1/3
+    // wektor przechowujacy okreslona na poczatku pliku ilosc instancji slownikow o zadanych pojemnosciach
     std::vector<openAddressing<int, int>> dictionary;
     dictionary.reserve(instances); 
     for (int i = 0; i < instances; ++i) {
         dictionary.emplace_back(numElements * loadFactor);
     }
 
+	// otwieranie pliku i informacja, co bedzie mierzone
 	file.open("pomiary.csv", std::ios::app);
 	file << "Czasy funkcji insert (open addressing) dla " << numElements << " elementow" << std::endl;
 
 
 	for (int j = 0; j<instances; j++){
-		// Ziarno dla pierwszej instancji slownika
+		// Ziarno dla kazdej kolejnej instancji slownika
 		srand(j+1); 
 		
 		// wypełnianie struktury zadana na wejscu iloscia liczb
@@ -51,22 +53,25 @@ void openAddressMeasureInsert(int numElements)
 			key = rand();
 			value = rand();
 
+			// rozpoczencie pomiaru
 			start = clock();
 
+			// funkcja, ktorej czas sie mierzy
 			dictionary[j].insert(key, value); 
 
+			// zakonczenie pomiaru i zapisanie go w zmiennej
 			duration = clock() - start;
 
-			//dodajemy czasy, aby potem wyciagnac z nich srednia
-			// Wraz z przeliczaniem cykli procsora na mikrosekundy (1s = 10^6 us)
+			//dodanie czasu do poprzednich, aby potem wyciagnac z nich srednia
+			// wraz z przeliczaniem cykli procsora na mikrosekundy (1s = 10^6 us)
 			srednia += double(duration)/ CLOCKS_PER_SEC * pow(10.0, 6.0);
 
-			//usuwanie dodanego elementu (o tym samym kluczu), aby nastepny mogl byc dodany do slownika o takim samym rozmiarze, co na poczatku
+			//usuwanie dodanego elementu (o tym samym kluczu), aby nastepny mogl byc dodany do tego samego slownika, co poprzedni
 			dictionary[j].remove(key);
 		}
 	}
 
-	
+	// obliczanie sredniej i jej zapis
 	srednia /= (instances * 4);
 	std::string stringSrednia = std::to_string(srednia);
 	file << "srednia: \n" << stringSrednia << std::endl;
@@ -80,8 +85,6 @@ void openAddressMeasureRemove(int numElements)
 	std::ofstream file;
 	int key, value;
 
-    // wektor przechowujacy 10 instancji slownikow o zadanych pojemnosciach
-	// load factor wynosi 1/3
     std::vector<openAddressing<int, int>> dictionary;
     dictionary.reserve(instances); 
     for (int i = 0; i < instances; ++i) {
@@ -91,19 +94,17 @@ void openAddressMeasureRemove(int numElements)
 	file.open("pomiary.csv", std::ios::app);
 	file << "Czasy funkcji remove (open addressing) dla " << numElements << " elementow" << std::endl;
 
-
 	for (int j = 0; j<instances; j++){
-		// Ziarno dla pierwszej instancji slownika
+
 		srand(j+1); 
 		
-		// wypełnianie struktury zadana na wejscu iloscia liczb
 		for (int i=0; i<numElements; i++){ 
 			key = rand();
 			value = rand();
             dictionary[j].insert(key, value);
 		}
 
-		srand (instances +1); // osobne ziarno dla liczb dodawanych do struktury
+		srand (instances +1); 
 		for (int k=0; k<4; k++){
 			key = rand();
 			value = rand();
@@ -114,8 +115,6 @@ void openAddressMeasureRemove(int numElements)
 
 			duration = clock() - start;
 
-			//dodajemy czasy, aby potem wyciagnac z nich srednia
-			// Wraz z przeliczaniem cykli procsora na mikrosekundy (1s = 10^6 us)
 			srednia += double(duration)/ CLOCKS_PER_SEC * pow(10.0, 6.0);
 
 			//dodawanie "z powrotem" tego samego elementu, aby nastepna operacja mogla zostac wykonana na tym samym slowniku
@@ -123,7 +122,7 @@ void openAddressMeasureRemove(int numElements)
 		}
 	}
 
-	// obliczanie sredniej, z 40 (4*10) pomiarow,
+	// obliczanie sredniej i zapis jej do pliku
 	srednia /= (instances * 4);
 	std::string stringSrednia = std::to_string(srednia);
 	file << "srednia: \n" << stringSrednia << std::endl;
@@ -133,6 +132,7 @@ void openAddressMeasureRemove(int numElements)
 
 // /*
 //     Funkcje pomiarowe dla kubelkow z listami
+// 		sa one napisane analogicznie do tych dla adresowania otawrtego
 // */
 void separateChainMeasureInsert(int numElements)
 {   
@@ -141,8 +141,6 @@ void separateChainMeasureInsert(int numElements)
 	std::ofstream file;
 	int key, value;
 
-    // wektor przechowujacy 10 instancji slownikow o zadanych pojemnosciach
-	// load factor wynosi 1/3
     std::vector<separateChain<int, int>> dictionary;
     dictionary.reserve(instances); 
     for (int i = 0; i < instances; ++i) {
@@ -154,38 +152,29 @@ void separateChainMeasureInsert(int numElements)
 
 
 	for (int j = 0; j< instances; j++){
-		// Ziarno dla pierwszej instancji slownika
+
 		srand(j+1); 
 		
-		// wypełnianie struktury zadana na wejscu iloscia liczb
 		for (int i=0; i<numElements; i++){ 
 			key = rand();
 			value = rand();
             dictionary[j].insert(key, value);
 		}
 
-		srand (instances + 1); // osobne ziarno dla liczb dodawanych do struktury
+		srand (instances + 1); 
 		for (int k=0; k<4; k++){
 			key = rand();
 			value = rand();
 
 			start = clock();
-
 			dictionary[j].insert(key, value); 
-
 			duration = clock() - start;
 
-			//dodajemy czasy, aby potem wyciagnac z nich srednia
-			// Wraz z przeliczaniem cykli procsora na mikrosekundy (1s = 10^6 us)
 			srednia += double(duration)/ CLOCKS_PER_SEC * pow(10.0, 6.0);
-
-			//usuwanie dodanego elementu (o tym samym kluczu)
-			//aby następna operacja mogla zostac wykonana na tym samym slowniku
 			dictionary[j].remove(key);
 		}
 	}
 
-	// obliczanie sredniej, z 40 (4*10) pomiarow,
 	srednia /= (instances * 4);
 	std::string stringSrednia = std::to_string(srednia);
 	file << "srednia: \n" << stringSrednia << std::endl;
@@ -199,8 +188,6 @@ void separateChainMeasureRemove(int numElements)
 	std::ofstream file;
 	int key, value;
 
-    // wektor przechowujacy 10 instancji slownikow o zadanych pojemnosciach
-	// load factor wynosi 1/3
     std::vector<separateChain<int, int>> dictionary;
     dictionary.reserve(instances); 
     for (int i = 0; i < instances; ++i) {
@@ -210,35 +197,25 @@ void separateChainMeasureRemove(int numElements)
 	file.open("pomiary.csv", std::ios::app);
 	file << "Czasy funkcji remove (separate chaining) dla " << numElements << " elementow" << std::endl;
 
-
 	for (int j = 0; j<instances; j++){
-		// Ziarno dla pierwszej instancji slownika
 		srand(j+1); 
 		
-	// 	// wypełnianie struktury zadana na wejscu iloscia liczb
 		for (int i=0; i< numElements; i++){ 
 			key = rand();
 			value = rand();
             dictionary[j].insert(key, value);
 		}
 
-		srand (instances + 1); // osobne ziarno dla liczb dodawanych do struktury
+		srand (instances + 1);
 		for (int k=0; k < 4; k++){
 			key = rand();
 			value = rand();
 
 			start = clock();
-			// mierzona operacja
-			// std::cout << key << std::endl;
 			dictionary[j].remove(key); 
-			
 			duration = clock() - start;
 
-	// 		//dodajemy czasy, aby potem wyciagnac z nich srednia
-	// 		// Wraz z przeliczaniem cykli procsora na mikrosekundy (1s = 10^6 us)
 			srednia += double(duration)/ CLOCKS_PER_SEC * pow(10.0, 6.0);
-
-	// 		//dodawanie "z powrotem" tego samego elementu, aby nastepna operacja mogla zostac wykonana na tym samym słowniku
 			dictionary[j].insert(key, value);
 		}
 	}

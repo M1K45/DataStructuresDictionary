@@ -5,6 +5,7 @@
 /*
     Do implementacji slownika kubelkami z lista zmodyfikowano liste wiazana
     ze wzkaznikami head i tail, napisana na potrzeby Miniprojektu 1
+    funkcje Add/Remove Beginning/End oraz display zostaly zmodyfikowane jedynie na potrzeby zamiany wartosci wezla na pare klucz - wartosc
 */
 template <typename K, typename V>
 struct Node{
@@ -40,7 +41,6 @@ public:
         if (size_ == 0) tail_ = n; 
         size_ ++;
     }
-
 
 	void removeBeginning(){
         if (size_ == 0){
@@ -99,10 +99,6 @@ public:
         tail_ = ptr;
         ptr -> next = nullptr;
         size_ --;
-        // if (size_ == 0){ 
-        //     head_ = nullptr;
-        //     tail_ = nullptr;
-        // }
     }
 
     /*
@@ -201,24 +197,19 @@ public:
         // przeszukiwanie listy w celu znalezienia klucza
         
         if (tail_ -> key == k){
-        // std::cout << "tu jestem\n";
             removeEnd();
             return true;
         }
-        // return;
+
         while (ptr -> next !=nullptr){
-            // std::cout << "wzkaznik pokazuje na klucz: " << ptr -> key << std::endl;
+
             if (head_ -> key == k)
             {
-                // std::cout << "znaleziono\n";
                 removeBeginning();
                 return true;
             }
             else {
-                // std::cout << "klucz, na ktory wzkazuje obenie ptr: " << ptr -> key << std::endl;
-
                 if (ptr -> next -> key == k){
-                    // przestawienie wzkaznikow w celu pominiecia tego wezla, ktorego chcemy usunac
                     ptr -> next = ptr -> next -> next;
                     return true;
                 }
@@ -226,10 +217,7 @@ public:
             }
 
         }
-
-        // std::cout << "nie znaleziono klucza\n";
         return false;
-
     }
 
     // wyswietlanie par klucz - wartosc w liscie
@@ -248,7 +236,6 @@ public:
         ptr = ptr -> next; 
         }
         std::cout << "klucz: " << ptr -> key << ", wartosc: " <<  ptr -> value << std::endl<< std::endl;
-
     }
 
     //Wyswietlanie tylko kluczy
@@ -281,7 +268,6 @@ public:
         std::cout << ptr -> value << std::endl<< std::endl;
 
     }
-
 
     int size(){
         return size_;

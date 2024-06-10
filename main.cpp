@@ -1,6 +1,6 @@
 #include <iostream> 
 #include "openAddressing.hpp"
-// #include "cuckooHashing.hpp"
+#include "cuckooHashing.hpp"
 #include "list.hpp"
 #include "separateChain.hpp"
 #include "visualize.hpp"
@@ -39,11 +39,10 @@ void mainMenu(){
     }   
 }
 
-
-
 int main (){
-    mainMenu();
-    return 0;
+    // mainMenu();
+   
+        return 0;
 }
 
 

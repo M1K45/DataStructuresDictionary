@@ -16,5 +16,6 @@ class Dictionary {
 
     // funkcja pomocnicza, wyswietlajaca slownik 
     virtual void display() = 0;
+    
     virtual ~Dictionary() {};
 };
