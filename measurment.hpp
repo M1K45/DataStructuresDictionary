@@ -130,10 +130,9 @@ void openAddressMeasureRemove(int numElements)
 }
 
 
-// /*
-//     Funkcje pomiarowe dla kubelkow z listami
-// 		sa one napisane analogicznie do tych dla adresowania otawrtego
-// */
+/*
+	Funkcje pomiarowe dla kubelkow z listami:
+*/
 void separateChainMeasureInsert(int numElements)
 {   
     double srednia, duration;

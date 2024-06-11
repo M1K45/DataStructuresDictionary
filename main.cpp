@@ -1,10 +1,10 @@
 #include <iostream> 
 #include "openAddressing.hpp"
-#include "cuckooHashing.hpp"
 #include "list.hpp"
 #include "separateChain.hpp"
 #include "visualize.hpp"
 #include "measurment.hpp"
+
 
 void mainMenu(){
     std::cout << "\n=====MENU GLOWNE====\n";
@@ -32,17 +32,14 @@ void mainMenu(){
         openAddressMeasureInsert(numElements);
         openAddressMeasureRemove(numElements);
         separateChainMeasureInsert(numElements);
-        separateChainMeasureRemove(numElements);      
+        separateChainMeasureRemove(numElements);  
         mainMenu();
+
     default:
         break;
     }   
 }
 
-int main (){
-    // mainMenu();
-   
-        return 0;
+int main() {
+    mainMenu();
 }
-
-

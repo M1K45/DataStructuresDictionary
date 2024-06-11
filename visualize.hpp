@@ -2,7 +2,7 @@
 
 #include <iostream> 
 #include "openAddressing.hpp"
-// #include "cuckooHashing.hpp"
+
 #include "list.hpp"
 #include "separateChain.hpp"
 
@@ -10,15 +10,16 @@
 void menuOpenAddress(){
     openAddressing <int, int>  dictionaryOpen(6);
     std::pair<int, int> pair;
-
     // dodawanie poczatkowych wartosci, zeby mozna bylo juz na nich wykonywac czesc operacji
     dictionaryOpen.insert(1, 11);
     dictionaryOpen.insert(2, 22);
     dictionaryOpen.insert(3, 33);
+
+    std::cout << "Stworzono przykladowy slownik z dodanymi wartosciami.\n";
     dictionaryOpen.display();
 
     menu:
-    std::cout << "\nJakia funkcje tej implementacji slownika chcesz przetestowac?\n";
+    std::cout << "\nKtora funkcje tej implementacji slownika chcesz przetestowac?\n";
     std::cout << "a) insert()\n";
     std::cout << "b) find()\n";
     std::cout << "c) remove()\n";
@@ -35,36 +36,43 @@ void menuOpenAddress(){
     switch (operation)
     {
     case 'a':
-        std::cout << "Podaj nowy klucz: "; std::cin >> pair.first;
+        std::cout << "\nPodaj nowy klucz: "; std::cin >> pair.first;
         std::cout << "Podaj nowa wartosc: "; std::cin >> pair.second;
 
         // dodawanie wpisanych przez uzytkownika wartosci do slownika
         dictionaryOpen.insert(pair.first, pair.second);
         std::cout << std::endl;
         // i wypisywanie go, aby pokazac, ze wartosc zostala dodana
+        std::cout << "Zawartosc slownika po dodaniu wartosci\n";
         dictionaryOpen.display();
 
         //przejscie z powrotem do menu
         goto menu;
     
     case 'b': 
-        std::cout << "Podaj klucz: "; std::cin >> pair.first;
-
+        std::cout << "\nPodaj klucz: "; std::cin >> pair.first;
         std::cout << "\nWartosc mapowana przez klucz: " << dictionaryOpen.find(pair.first) << std::endl;
         goto menu;
 
     case 'c':
-        std::cout << "Podaj klucz elementu, ktorego chcesz usunac: "; std::cin >> pair.first;
+        // Wypisywanie zawartosci slownika, aby uzytkownik mogl 
+        // wybrac wartosc do usuniecia
+        std::cout << "\nZawartosc slownika:\n";
+        dictionaryOpen.display(); 
 
+        std::cout << "Podaj klucz elementu, ktorego chcesz usunac: "; std::cin >> pair.first;
+        // usuwanie wybranego elementu
         dictionaryOpen.remove(pair.first);
         std::cout << std::endl;
         // wypisywanie slownika, aby pokazac, ze wartosc zostala usunieta
+        std::cout << "Zawartosc slownika po usunieciu wartosci\n";
         dictionaryOpen.display();
         goto menu;
 
     case 'd': 
-        std::cout << "Podaj klucz: "; std::cin >> pair.first;
+        std::cout << "\nPodaj klucz: "; std::cin >> pair.first;
 
+        // wypisanie opdowiedniego komunikatu w zaleznosci od wyniku funkcji exists()
         if (dictionaryOpen.exists(pair.first)) std::cout << "Element o takim kluczu znajduje sie w slowniku\n\n";
         else std::cout << "Element o takim kluczu nie znajduje sie w slowniku\n\n";
         goto menu;
@@ -95,7 +103,7 @@ void menuOpenAddress(){
     }
 }
 
-// menu dla implementacji przy uzyciu kubelkow z listami jest analogiczne do tego dla adresowania otwartego
+// menu dla pozostalych implementacji dziala tak samo 
 void menuSeparateChain(){
 
     separateChain <int, int>  dictionaryChain(6);
@@ -110,6 +118,8 @@ void menuSeparateChain(){
     dictionaryChain.insert(7, 77);
     dictionaryChain.insert(8, 88);
     dictionaryChain.insert(9, 99);
+
+    std::cout << "Stworzono przykladowy slownik z dodanymi wartosciami.\n";
     dictionaryChain.display();
 
     menu:
@@ -130,7 +140,7 @@ void menuSeparateChain(){
     switch (operation)
     {
     case 'a':
-        std::cout << "Podaj nowy klucz: "; std::cin >> pair.first;
+        std::cout << "\nPodaj nowy klucz: "; std::cin >> pair.first;
         std::cout << "Podaj nowa wartosc: "; std::cin >> pair.second;
 
         dictionaryChain.insert(pair.first, pair.second);
@@ -139,30 +149,33 @@ void menuSeparateChain(){
         goto menu;
     
     case 'b': 
-        std::cout << "Podaj klucz: "; std::cin >> pair.first;
+        std::cout << "\nPodaj klucz: "; std::cin >> pair.first;
         std::cout << "\nWartosc mapowana przez klucz: " << dictionaryChain.find(pair.first) << std::endl;
         goto menu;
 
     case 'c':
-        std::cout << "Podaj klucz elementu, ktorego chcesz usunac: "; std::cin >> pair.first;
+        std::cout << "\nZawartosc slownika:\n";
+        dictionaryChain.display(); 
+
+        std::cout << "\nPodaj klucz elementu, ktorego chcesz usunac: "; std::cin >> pair.first;
         dictionaryChain.remove(pair.first);
         std::cout << std::endl;
         dictionaryChain.display();
         goto menu;
 
     case 'd': 
-        std::cout << "Podaj klucz: "; std::cin >> pair.first;
+        std::cout << "\nPodaj klucz: "; std::cin >> pair.first;
 
-        if (dictionaryChain.exists(pair.first)) std::cout << "Element o takim kluczu znajduje sie w slowniku\n\n";
-        else std::cout << "Element o takim kluczu nie znajduje sie w slowniku\n\n";
+        if (dictionaryChain.exists(pair.first)) std::cout << "Element o takim kluczu znajduje sie w slowniku\n";
+        else std::cout << "Element o takim kluczu nie znajduje sie w slowniku\n";
         goto menu;
 
     case 'e':
-        std::cout << "Ilosc elementow w slowniku: " << dictionaryChain.size() << std::endl;
+        std::cout << "\nIlosc elementow w slowniku: " << dictionaryChain.size() << std::endl;
         goto menu;
 
     case 'f': 
-        if (dictionaryChain.empty()) std::cout << "Slownik jest pusty\n";
+        if (dictionaryChain.empty()) std::cout << "\nSlownik jest pusty\n";
         else std::cout << "Slownik nie jest pusty\n";
         goto menu;
 
@@ -181,6 +194,4 @@ void menuSeparateChain(){
     default:
         break;
     }
-
 }
-

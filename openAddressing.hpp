@@ -20,6 +20,12 @@ private:
     // zmienna sluzaca jako stala do funkcji hashujacej (linear probing)
     int C = 1;
 
+    // haszowanie klucza, wykorzystujace linear probing
+    int hash (K key, int k)
+    {
+        return ((key % capacity) + k*C ) % capacity;       
+    }
+
 public: 
     // konstruktor, za pomocą niego definiujemy rozmiar tablicy
     // i inicjalizujemy poczatkowa ilosc elementow
@@ -33,12 +39,6 @@ public:
             table[i].first = free;
         }
     } 
-
-    // haszowanie klucza, wykorzystujace linear probing
-    int hash (K key, int k)
-    {
-        return ((key % capacity) + k*C ) % capacity;       
-    }
 
     void insert( K key,  V value) override 
     {
@@ -196,7 +196,6 @@ public:
     // funkcja pomocnicza sluzaca do wyswietlania par klucz-wartosc
     void display() override
     {
-        std::cout << "Zawartosc slownika\n";
         for (int i = 0; i < capacity; i++) 
         {
             std::cout << "indeks " << i << "| ";
